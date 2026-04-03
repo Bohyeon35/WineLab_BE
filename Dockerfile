@@ -5,7 +5,7 @@ COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle .
 COPY src src
-RUN chmod +x ./gradlew && ./gradlew bootJar -x test
+RUN dos2unix ./gradlew || true && chmod +x ./gradlew && ./gradlew bootJar -x test
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
