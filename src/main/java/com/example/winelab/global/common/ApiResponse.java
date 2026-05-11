@@ -6,6 +6,7 @@ import com.example.winelab.global.exception.ErrorCode;
 @Getter
 public class ApiResponse<T> {
 
+
     private final int status;
     private final boolean success;
     private final String message;
