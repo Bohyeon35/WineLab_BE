@@ -46,4 +46,16 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "USER_ROLE", nullable = false)
     private Role role;
+
+    public void updateSocialInfo(
+            String name,
+            String pictureUrl,
+            SocialProvider socialProvider,
+            String socialId
+    ) {
+        this.name = name;
+        this.pictureUrl = pictureUrl;
+        this.socialProvider = socialProvider;
+        this.socialId = socialId;
+    }
 }

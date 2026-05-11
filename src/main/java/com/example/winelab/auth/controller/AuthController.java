@@ -1,6 +1,6 @@
 package com.example.winelab.auth.controller;
 
-import com.example.winelab.auth.dto.TokenDto;
+import com.example.winelab.auth.dto.LoginResponseDto;
 import com.example.winelab.auth.service.AuthService;
 import com.example.winelab.domain.member.entity.SocialProvider;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,12 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("/callback/google")
-    public TokenDto googleCallback(@RequestParam("code") String code) {
+    public LoginResponseDto googleCallback(@RequestParam("code") String code) {
         return authService.loginOrSignUp(SocialProvider.GOOGLE, code);
+    }
+
+    @GetMapping("/callback/kakao")
+    public LoginResponseDto kakaoCallback(@RequestParam("code") String code) {
+        return authService.loginOrSignUp(SocialProvider.KAKAO, code);
     }
 }

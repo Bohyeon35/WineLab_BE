@@ -1,6 +1,5 @@
 package com.example.winelab.auth.jwt;
 
-import com.example.winelab.auth.dto.TokenDto;
 import com.example.winelab.domain.member.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -37,20 +36,16 @@ public class TokenProvider {
         this.accessTokenValidityTime = accessTokenValidityTime;
     }
 
-    public TokenDto createToken(User user) {
+    public String createAccessToken(User user) {
         long nowTime = new Date().getTime();
         Date tokenExpiredTime = new Date(nowTime + accessTokenValidityTime);
 
-        String accessToken = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim("auth", user.getRole().name())
                 .setExpiration(tokenExpiredTime)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-
-        return TokenDto.builder()
-                .accessToken(accessToken)
-                .build();
     }
 
     public Authentication getAuthentication(String accessToken) {

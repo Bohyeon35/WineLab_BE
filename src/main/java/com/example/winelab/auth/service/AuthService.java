@@ -1,6 +1,6 @@
 package com.example.winelab.auth.service;
 
-import com.example.winelab.auth.dto.TokenDto;
+import com.example.winelab.auth.dto.LoginResponseDto;
 import com.example.winelab.auth.jwt.TokenProvider;
 import com.example.winelab.auth.oauth.OAuthClient;
 import com.example.winelab.auth.oauth.OAuthUserInfo;
@@ -31,7 +31,7 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenDto loginOrSignUp(SocialProvider provider, String code) {
+    public LoginResponseDto loginOrSignUp(SocialProvider provider, String code) {
         OAuthUserInfo userInfo = getOAuthClient(provider).getUserInfo(code);
 
         if (Boolean.FALSE.equals(userInfo.getVerifiedEmail())) {
@@ -39,17 +39,36 @@ public class AuthService {
         }
 
         User user = userRepository.findBySocialProviderAndSocialId(provider, userInfo.getProviderId())
-                .or(() -> userRepository.findByEmail(userInfo.getEmail()))
-                .orElseGet(() -> userRepository.save(User.builder()
-                        .email(userInfo.getEmail())
-                        .name(userInfo.getName())
-                        .pictureUrl(userInfo.getPictureUrl())
-                        .socialProvider(provider)
-                        .socialId(userInfo.getProviderId())
-                        .role(Role.ROLE_USER)
-                        .build()));
+                .orElseGet(() -> userRepository.findByEmail(userInfo.getEmail())
+                        .map(existingUser -> {
+                            existingUser.updateSocialInfo(
+                                    userInfo.getName(),
+                                    userInfo.getPictureUrl(),
+                                    provider,
+                                    userInfo.getProviderId()
+                            );
+                            return existingUser;
+                        })
+                        .orElseGet(() -> userRepository.save(User.builder()
+                                .email(userInfo.getEmail())
+                                .name(userInfo.getName())
+                                .pictureUrl(userInfo.getPictureUrl())
+                                .socialProvider(provider)
+                                .socialId(userInfo.getProviderId())
+                                .role(Role.ROLE_USER)
+                                .build())));
 
-        return tokenProvider.createToken(user);
+        String accessToken = tokenProvider.createAccessToken(user);
+
+        return LoginResponseDto.builder()
+                .accessToken(accessToken)
+                .tokenType("Bearer")
+                .userId(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .pictureUrl(user.getPictureUrl())
+                .socialProvider(user.getSocialProvider())
+                .build();
     }
 
     private OAuthClient getOAuthClient(SocialProvider provider) {

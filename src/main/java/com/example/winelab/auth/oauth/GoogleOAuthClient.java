@@ -1,7 +1,7 @@
 package com.example.winelab.auth.oauth;
 
-import com.example.winelab.auth.dto.TokenDto;
-import com.example.winelab.auth.dto.UserInfoDto;
+import com.example.winelab.auth.dto.GoogleUserInfoDto;
+import com.example.winelab.auth.dto.OAuthTokenResponseDto;
 import com.example.winelab.domain.member.entity.SocialProvider;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +43,7 @@ public class GoogleOAuthClient implements OAuthClient {
     @Override
     public OAuthUserInfo getUserInfo(String code) {
         String accessToken = getAccessToken(code);
-        UserInfoDto userInfoDto = requestUserInfo(accessToken);
+        GoogleUserInfoDto userInfoDto = requestUserInfo(accessToken);
 
         return OAuthUserInfo.builder()
                 .provider(getProvider())
@@ -72,13 +72,13 @@ public class GoogleOAuthClient implements OAuthClient {
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(googleTokenUrl, requestEntity, String.class);
 
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            return gson.fromJson(responseEntity.getBody(), TokenDto.class).getAccessToken();
+            return gson.fromJson(responseEntity.getBody(), OAuthTokenResponseDto.class).getAccessToken();
         }
 
         throw new RuntimeException("Google access token request failed.");
     }
 
-    private UserInfoDto requestUserInfo(String accessToken) {
+    private GoogleUserInfoDto requestUserInfo(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -94,7 +94,7 @@ public class GoogleOAuthClient implements OAuthClient {
         );
 
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            return gson.fromJson(responseEntity.getBody(), UserInfoDto.class);
+            return gson.fromJson(responseEntity.getBody(), GoogleUserInfoDto.class);
         }
 
         throw new RuntimeException("Google user info request failed.");
