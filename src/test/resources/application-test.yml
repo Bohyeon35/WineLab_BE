@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:winelab-test;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+jwt:
+  secret: test-secret-key-test-secret-key-test-secret-key
+  access-token-validity-in-milliseconds: 3600000
+
+oauth:
+  google:
+    authorization-url: https://accounts.google.com/o/oauth2/v2/auth
+    token-url: https://oauth2.googleapis.com/token
+    user-info-url: https://www.googleapis.com/oauth2/v2/userinfo
+    client-id: test-google-client-id
+    client-secret: test-google-client-secret
+    redirect-uri: http://localhost:8080/api/callback/google
+  kakao:
+    authorization-url: https://kauth.kakao.com/oauth/authorize
+    token-url: https://kauth.kakao.com/oauth/token
+    user-info-url: https://kapi.kakao.com/v2/user/me
+    client-id: test-kakao-client-id
+    client-secret:
+    redirect-uri: http://localhost:8080/api/callback/kakao
