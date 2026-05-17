@@ -1,9 +1,10 @@
 package com.example.winelab.auth.controller;
 
 import com.example.winelab.auth.dto.LoginResponseDto;
-import com.example.winelab.auth.service.OAuthAuthorizationService;
 import com.example.winelab.auth.service.AuthService;
+import com.example.winelab.auth.service.OAuthAuthorizationService;
 import com.example.winelab.domain.member.entity.SocialProvider;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Auth", description = "Social login APIs")
+@Tag(name = "Auth", description = "소셜 로그인 API")
 @RequestMapping("/api")
 @RestController
 @RequiredArgsConstructor
@@ -25,25 +26,31 @@ public class AuthController {
     private final AuthService authService;
     private final OAuthAuthorizationService oAuthAuthorizationService;
 
-    @Operation(summary = "Google 로그인 URL 조회", description = "Swagger에서 실행한 뒤 응답 URL을 브라우저에서 열면 Google 로그인 화면으로 이동합니다.")
+    @Hidden
     @GetMapping("/oauth/google/authorization-url")
     public String googleAuthorizationUrl() {
         return oAuthAuthorizationService.getAuthorizationUrl(SocialProvider.GOOGLE);
     }
 
-    @Operation(summary = "Kakao 로그인 URL 조회", description = "Swagger에서 실행한 뒤 응답 URL을 브라우저에서 열면 Kakao 로그인 화면으로 이동합니다.")
+    @Hidden
     @GetMapping("/oauth/kakao/authorization-url")
     public String kakaoAuthorizationUrl() {
         return oAuthAuthorizationService.getAuthorizationUrl(SocialProvider.KAKAO);
     }
 
-    @Operation(summary = "Google 로그인 시작", description = "브라우저에서 직접 호출하면 Google 로그인 화면으로 redirect됩니다.")
+    @Operation(
+            summary = "Google 로그인",
+            description = "Swagger 테스트는 [Google 로그인 바로가기](/api/login/google)를 클릭해서 진행하세요. Execute를 누르면 302 redirect 응답만 확인됩니다."
+    )
     @GetMapping("/login/google")
     public ResponseEntity<Void> googleLogin() {
         return redirectTo(oAuthAuthorizationService.getAuthorizationUrl(SocialProvider.GOOGLE));
     }
 
-    @Operation(summary = "Kakao 로그인 시작", description = "브라우저에서 직접 호출하면 Kakao 로그인 화면으로 redirect됩니다.")
+    @Operation(
+            summary = "Kakao 로그인",
+            description = "Swagger 테스트는 [Kakao 로그인 바로가기](/api/login/kakao)를 클릭해서 진행하세요. Execute를 누르면 302 redirect 응답만 확인됩니다."
+    )
     @GetMapping("/login/kakao")
     public ResponseEntity<Void> kakaoLogin() {
         return redirectTo(oAuthAuthorizationService.getAuthorizationUrl(SocialProvider.KAKAO));
