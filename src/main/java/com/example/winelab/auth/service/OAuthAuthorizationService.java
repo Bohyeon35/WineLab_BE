@@ -32,7 +32,7 @@ public class OAuthAuthorizationService {
         }
 
         if (provider == SocialProvider.KAKAO) {
-            return buildKakaoAuthor재 izationUrl();
+            return buildKakaoAuthorizationUrl();
         }
 
         throw new RuntimeException("Unsupported social provider: " + provider);
