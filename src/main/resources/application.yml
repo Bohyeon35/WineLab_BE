@@ -1,4 +1,10 @@
 spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,4 +20,4 @@ springdoc:
     path: /api-docs
 
 server:
-  port: 8080
+  port: ${PORT:8080}
